@@ -92,33 +92,3 @@ cd backend
 npm install
 cp .env.example .env  # Set your MongoDB URI, JWT secret, and API keys
 npm run start
-
-
-📱 Frontend Setup
-cd frontend
-flutter pub get
-flutter run
-
-🛡 Security
-HTTPS-ready API
-
-JWT Authentication for users and drivers
-
-CORS and request validation implemented
-
-🧭 Roadmap
-Wallet system with in-app payments
-
-Admin Dashboard for Ride Management
-
-Notifications via Firebase
-
-Ride-sharing (pool) feature
-
-🤝 Contribution
-This project is currently maintained privately for Nubicus Consultancy. Contributions are restricted to authorized developers.
-
-📬 Contact
-Developer: Alan Shaju
-Email: [alanshaju26@gmail.com][alanshaju@cybersecurityspecialist.in]
-GitHub: github.com/Alan2k2
