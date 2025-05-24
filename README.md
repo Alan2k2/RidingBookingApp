@@ -82,6 +82,7 @@ This is the **initial production release (v1.0)** and serves as a strong foundat
 
 
 ![9](https://github.com/user-attachments/assets/737c43fe-ac1b-4b8e-8e55-bd9e1963f97d)
+<img src="https://github.com/user-attachments/assets/737c43fe-ac1b-4b8e-8e55-bd9e1963f97d">
 ![8](https://github.com/user-attachments/assets/a642c4fd-b7e7-4f9c-8883-f8ab8d21d062)
 ![7](https://github.com/user-attachments/assets/ff939891-6d0a-4886-960a-ec9929f9de82)
 ![6](https://github.com/user-attachments/assets/2ff3877b-f752-4715-b913-85c0b99f48d6)
