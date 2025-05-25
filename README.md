@@ -121,6 +121,7 @@ This project is currently maintained privately for Nubicus Consultancy. Contribu
 Developer: Alan Shaju
 Email: [alanshaju26@gmail.com][alanshaju@cybersecurityspecialist.in]
 GitHub: github.com/Alan2k2
+LinkedIn: https://www.linkedin.com/in/alan-shaju-43a5a1225/
 
 ---
 
