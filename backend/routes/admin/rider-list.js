@@ -4,12 +4,29 @@ const router = express.Router();
 const User = require('../../models/User');
 
 // Example route
+// router.get('/riders', async (req, res) => {
+//   try {
+//     const riders = await User.find({ category: 'Rider' });
+//     res.json(riders);
+//   } catch (err) {
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
 router.get('/riders', async (req, res) => {
   try {
-    const riders = await User.find({ category: 'Rider' });
+    const { category, vehicle, isVerified } = req.query;
+
+    // Build a dynamic query object
+    const query = {};
+    if (category) query.category = category;
+    if (vehicle) query.vehicle = vehicle;
+    if(isVerified) query.isVerified = isVerified;
+
+    const riders = await User.find(query);
     res.json(riders);
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

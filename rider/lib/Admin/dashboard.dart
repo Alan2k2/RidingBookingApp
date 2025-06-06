@@ -1,6 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> logout(BuildContext context) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  final response = await http.post(
+    Uri.parse('http://192.168.29.177:5000/api/auth/logout'),
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+  );
+
+  // Regardless of API response, remove token
+  await prefs.remove('token');
+
+  // Navigate to login
+  if (context.mounted) {
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+  }
+}
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -55,17 +78,23 @@ class AdminDashboard extends StatelessWidget {
                     color: Colors.teal,
                     onTap: () {},
                   ),
+                  // _buildDashboardCard(
+                  //   icon: LucideIcons.logOut,
+                  //   label: "Logout",
+                  //   color: Colors.red,
+                  //   onTap: () {
+                  //     Navigator.pushNamedAndRemoveUntil(
+                  //       context,
+                  //       '/login',
+                  //       (_) => false,
+                  //     );
+                  //   },
+                  // ),
                   _buildDashboardCard(
                     icon: LucideIcons.logOut,
                     label: "Logout",
                     color: Colors.red,
-                    onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/login',
-                        (_) => false,
-                      );
-                    },
+                    onTap: () => logout(context),
                   ),
                 ],
               ),
@@ -359,15 +388,20 @@ class AdminDashboard extends StatelessWidget {
             title: const Text('Orders'),
             onTap: () => Navigator.pushNamed(context, '/admin/orders'),
           ),
+          // ListTile(
+          //   leading: const Icon(LucideIcons.logOut),
+          //   title: const Text('Logout'),
+          //   onTap:
+          //       () => Navigator.pushNamedAndRemoveUntil(
+          //         context,
+          //         '/auth',
+          //         (_) => false,
+          //       ),
+          // ),
           ListTile(
             leading: const Icon(LucideIcons.logOut),
             title: const Text('Logout'),
-            onTap:
-                () => Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/auth',
-                  (_) => false,
-                ),
+            onTap: () => logout(context),
           ),
         ],
       ),

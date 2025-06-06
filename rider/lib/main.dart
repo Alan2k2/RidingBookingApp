@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'widgets/splash.dart';
 import 'screens/home_screen.dart';
 import 'screens/auto_page.dart'; // Import AutoPage
 import 'screens/car_page.dart'; // Import CarPage
 import 'screens/bike_page.dart'; // Import BikePage
+import 'screens/login.dart'; // Import LoginPage
 
 import './Admin/dashboard.dart';
 import './Admin/screens/user.dart';
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Curved Nav Demo',
+      title: 'Saras Rider',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: ThemeData(
@@ -43,7 +45,9 @@ class MyApp extends StatelessWidget {
           ),
       // Define Routes for your app
       routes: {
-        '/': (context) => MainPage(), // Home Screen
+        '/': (context) => SplashScreen(),
+        '/main': (context) => MainPage(), // Home Screen
+        '/login': (context) => AuthPage(), // Login Page
         '/autoPage': (context) => AutoPage(), // AutoPage
         '/carPage': (context) => CarPage(), // CarPage
         '/bikePage': (context) => BikePage(), // BikePage

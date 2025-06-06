@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
   pincode: { type: String, required: true },
   place: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
-  ipAddress: { type: String, unique: true, default: null },
+  ipAddress: { type: String },
+  vehicle: { type: String, default: null },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

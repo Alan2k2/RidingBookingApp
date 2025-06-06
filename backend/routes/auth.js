@@ -16,8 +16,12 @@ const getClientIP = (req) => {
 
 // ✅ Register
 router.post('/register', async (req, res) => {
-  const { username, password, category, phone, pincode, place } = req.body;
+  const { username, password, category, phone, pincode, place, vehicle } = req.body;
   const ipAddress = getClientIP(req);
+
+  if (category === "Rider" && !vehicle) {
+    return res.status(400).json({ message: "Vehicle is required for Rider category." });
+  }
 
   try {
     const existingUser = await User.findOne({ username });
@@ -33,6 +37,7 @@ router.post('/register', async (req, res) => {
       phone,
       pincode,
       place,
+      vehicle: category === "Rider" ? vehicle : undefined,
       ipAddress, // Store IP
     });
 
@@ -79,6 +84,20 @@ router.post('/login', async (req, res) => {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Server error' });
   }
+});
+
+// Logout Route
+/**
+ * @route   POST /api/auth/logout
+ * @desc    Logs out user by instructing client to delete token
+ * @access  Public
+ */
+router.post('/logout', (_req, res) => {
+  // No server-side token invalidation because JWT is stateless
+  res.status(200).json({
+    success: true,
+    message: 'Logout successful. Please remove the token on the client side.',
+  });
 });
 
 module.exports = router;

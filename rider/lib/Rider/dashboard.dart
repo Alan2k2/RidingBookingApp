@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-// import '../screens/login.dart';
+Future<void> logout(BuildContext context) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  final response = await http.post(
+    Uri.parse('http://192.168.29.177:5000/api/auth/logout'),
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+  );
+
+  // Regardless of API response, remove token
+  await prefs.remove('token');
+
+  // Navigate to login
+  if (context.mounted) {
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+  }
+}
 
 class RiderDashboard extends StatelessWidget {
   const RiderDashboard({super.key});
@@ -9,33 +30,35 @@ class RiderDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rider Dashboard'),
-        backgroundColor: theme.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.logOut),
-            onPressed: () {
-              // Add logout logic
-            },
+            onPressed: () => logout(context),
           ),
         ],
       ),
       drawer: _buildDrawer(context),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(
+          horizontal: size.width * 0.04,
+          vertical: size.height * 0.02,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context),
-            const SizedBox(height: 20),
-            _buildSummary(context),
-            const SizedBox(height: 20),
+            _buildHeader(context, size),
+            SizedBox(height: size.height * 0.03),
+            _buildSummary(context, size),
+            SizedBox(height: size.height * 0.03),
             _buildActiveTripCard(context),
-            const SizedBox(height: 20),
+            SizedBox(height: size.height * 0.03),
             _buildActionGrid(context),
           ],
         ),
@@ -48,101 +71,109 @@ class RiderDashboard extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.only(top: 60),
         children: [
-          const ListTile(leading: Icon(Icons.person), title: Text('Profile')),
-          const ListTile(
-            leading: Icon(Icons.history),
-            title: Text('Trip History'),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Profile'),
+            onTap: () {},
           ),
-          const ListTile(
-            leading: Icon(Icons.account_balance_wallet),
-            title: Text('Wallet'),
+          ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text('Trip History'),
+            onTap: () {},
           ),
-          const ListTile(
-            leading: Icon(Icons.support_agent),
-            title: Text('Support'),
+          ListTile(
+            leading: const Icon(Icons.account_balance_wallet),
+            title: const Text('Wallet'),
+            onTap: () {},
           ),
+          ListTile(
+            leading: const Icon(Icons.support_agent),
+            title: const Text('Support'),
+            onTap: () {},
+          ),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
+            onTap: () => logout(context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, Size size) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         const CircleAvatar(
           radius: 30,
           backgroundImage: AssetImage('assets/profile.jpg'),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: size.width * 0.04),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('Welcome Back,'),
-            Text(
-              'Rider John',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+          children: [
+            Text('Welcome Back', style: theme.textTheme.bodyMedium),
+            Text('Rider John', style: theme.textTheme.titleMedium),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSummary(BuildContext context) {
+  Widget _buildSummary(BuildContext context, Size size) {
     return Row(
       children: [
-        _summaryCard(Icons.attach_money, 'Earnings', '₹1520'),
-        const SizedBox(width: 10),
-        _summaryCard(Icons.check_circle, 'Trips', '12'),
+        Expanded(
+          child: _summaryCard(Icons.monetization_on, 'Earnings', '₹1,520'),
+        ),
+        SizedBox(width: size.width * 0.04),
+        Expanded(
+          child: _summaryCard(Icons.check_circle_outline, 'Trips', '12'),
+        ),
       ],
     );
   }
 
   Widget _summaryCard(IconData icon, String label, String value) {
-    return Expanded(
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Icon(icon, size: 30, color: Colors.blue),
-              const SizedBox(height: 10),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              Text(label, style: const TextStyle(color: Colors.grey)),
-            ],
-          ),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        child: Column(
+          children: [
+            Icon(icon, size: 30, color: Colors.deepPurple),
+            const SizedBox(height: 10),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(label, style: const TextStyle(color: Colors.grey)),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildActiveTripCard(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      color: Colors.green.shade50,
+      color: theme.colorScheme.secondaryContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: const Icon(Icons.directions_car, color: Colors.green),
+        leading: Icon(Icons.directions_car, color: theme.colorScheme.primary),
         title: const Text('Active Trip'),
         subtitle: const Text('Pickup: Downtown\nDrop: Airport'),
         trailing: ElevatedButton(
           onPressed: () {
             // Navigate to live trip tracking
           },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+          ),
           child: const Text('View'),
         ),
       ),
@@ -150,29 +181,56 @@ class RiderDashboard extends StatelessWidget {
   }
 
   Widget _buildActionGrid(BuildContext context) {
-    return GridView(
+    final screenWidth = MediaQuery.of(context).size.width;
+    int crossAxisCount = screenWidth > 600 ? 3 : 2;
+
+    return GridView.builder(
       shrinkWrap: true,
+      itemCount: 4,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
+        childAspectRatio: 1.1,
       ),
-      children: [
-        _actionCard(Icons.play_arrow, 'Start Trip', Colors.indigo, () {
-          Navigator.pushNamed(context, '/start-trip');
-        }),
-        _actionCard(Icons.history, 'Trip History', Colors.orange, () {
-          Navigator.pushNamed(context, '/trip-history');
-        }),
-        _actionCard(Icons.wallet, 'Wallet', Colors.teal, () {
-          Navigator.pushNamed(context, '/wallet');
-        }),
-        _actionCard(Icons.support_agent, 'Support', Colors.red, () {
-          Navigator.pushNamed(context, '/support');
-        }),
-      ],
+      itemBuilder: (context, index) {
+        final actions = [
+          {
+            'icon': Icons.play_arrow,
+            'label': 'Start Trip',
+            'color': Colors.blue,
+            'route': '/start-trip',
+          },
+          {
+            'icon': Icons.history,
+            'label': 'Trip History',
+            'color': Colors.orange,
+            'route': '/trip-history',
+          },
+          {
+            'icon': Icons.wallet,
+            'label': 'Wallet',
+            'color': Colors.teal,
+            'route': '/wallet',
+          },
+          {
+            'icon': Icons.support_agent,
+            'label': 'Support',
+            'color': Colors.redAccent,
+            'route': '/support',
+          },
+        ];
+        final item = actions[index];
+        return _actionCard(
+          item['icon'] as IconData,
+          item['label'] as String,
+          item['color'] as Color,
+          () {
+            Navigator.pushNamed(context, item['route'] as String);
+          },
+        );
+      },
     );
   }
 
@@ -185,14 +243,14 @@ class RiderDashboard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 3,
+        elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircleAvatar(
-                backgroundColor: color.withOpacity(0.2),
+                backgroundColor: color.withOpacity(0.1),
                 child: Icon(icon, color: color),
               ),
               const SizedBox(height: 8),

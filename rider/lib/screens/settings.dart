@@ -1,90 +1,173 @@
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  // Toggle states for switches
+  bool _pushNotifications = true;
+  bool _emailNotifications = false;
+  bool _privacyPolicyAccepted = false;
+
   @override
   Widget build(BuildContext context) {
+    final iconColor = Theme.of(context).iconTheme.color;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color;
+    final sectionTextStyle = Theme.of(
+      context,
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings'),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: ListView(
         children: [
-          // Profile Settings Section
-          _buildSectionHeader('Profile Settings'),
-          _buildSettingItem('Edit Profile', Icons.edit, () {
-            // Navigate to edit profile screen
-          }),
-          _buildSettingItem('Change Profile Picture', Icons.photo_camera, () {
-            // Open profile picture picker
-          }),
+          _buildSectionHeader('Profile Settings', sectionTextStyle),
+          _buildSettingItem(
+            'Edit Profile',
+            Icons.edit,
+            iconColor,
+            textColor,
+            () {
+              // Navigate to edit profile screen
+            },
+          ),
+          _buildSettingItem(
+            'Change Profile Picture',
+            Icons.photo_camera,
+            iconColor,
+            textColor,
+            () {
+              // Open profile picture picker
+            },
+          ),
 
-          // Notification Settings Section
-          _buildSectionHeader('Notifications'),
-          _buildSettingItem('Push Notifications', Icons.notifications, () {
-            // Navigate to push notifications settings
-          }),
-          _buildSettingItem('Email Notifications', Icons.email, () {
-            // Navigate to email notification settings
-          }),
+          _buildSectionHeader('Notifications', sectionTextStyle),
+          _buildSettingItem(
+            'Push Notifications',
+            Icons.notifications,
+            iconColor,
+            textColor,
+            null,
+            switchValue: _pushNotifications,
+            onSwitchChanged: (val) {
+              setState(() {
+                _pushNotifications = val;
+              });
+            },
+          ),
+          _buildSettingItem(
+            'Email Notifications',
+            Icons.email,
+            iconColor,
+            textColor,
+            null,
+            switchValue: _emailNotifications,
+            onSwitchChanged: (val) {
+              setState(() {
+                _emailNotifications = val;
+              });
+            },
+          ),
 
-          // Payment Settings Section
-          _buildSectionHeader('Payment'),
-          _buildSettingItem('Payment Methods', Icons.credit_card, () {
-            // Navigate to payment methods
-          }),
-          _buildSettingItem('Transaction History', Icons.history, () {
-            // Navigate to transaction history
-          }),
+          _buildSectionHeader('Payment', sectionTextStyle),
+          _buildSettingItem(
+            'Payment Methods',
+            Icons.credit_card,
+            iconColor,
+            textColor,
+            () {
+              // Navigate to payment methods
+            },
+          ),
+          _buildSettingItem(
+            'Transaction History',
+            Icons.history,
+            iconColor,
+            textColor,
+            () {
+              // Navigate to transaction history
+            },
+          ),
 
-          // Privacy Settings Section
-          _buildSectionHeader('Privacy'),
-          _buildSettingItem('Privacy Policy', Icons.lock, () {
-            // Navigate to privacy policy
-          }),
-          _buildSettingItem('Change Password', Icons.lock_outline, () {
-            // Navigate to change password screen
-          }),
+          _buildSectionHeader('Privacy', sectionTextStyle),
+          _buildSettingItem(
+            'Privacy Policy',
+            Icons.lock,
+            iconColor,
+            textColor,
+            null,
+            switchValue: _privacyPolicyAccepted,
+            onSwitchChanged: (val) {
+              setState(() {
+                _privacyPolicyAccepted = val;
+              });
+            },
+          ),
+          _buildSettingItem(
+            'Change Password',
+            Icons.lock_outline,
+            iconColor,
+            textColor,
+            () {
+              // Navigate to change password screen
+            },
+          ),
 
-          // About Section
-          _buildSectionHeader('About'),
-          _buildSettingItem('About App', Icons.info, () {
+          _buildSectionHeader('About', sectionTextStyle),
+          _buildSettingItem('About App', Icons.info, iconColor, textColor, () {
             // Navigate to about app screen
           }),
-          _buildSettingItem('Help & Support', Icons.help_outline, () {
-            // Navigate to help & support screen
-          }),
+          _buildSettingItem(
+            'Help & Support',
+            Icons.help_outline,
+            iconColor,
+            textColor,
+            () {
+              // Navigate to help & support screen
+            },
+          ),
 
-          // Log Out Button
-          _buildLogoutButton(),
+          _buildLogoutButton(context),
         ],
       ),
     );
   }
 
-  // Section header widget
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, TextStyle? style) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Text(
-        title,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      child: Text(title, style: style),
     );
   }
 
-  // Individual setting item widget
-  Widget _buildSettingItem(String title, IconData icon, Function onTap) {
+  Widget _buildSettingItem(
+    String title,
+    IconData icon,
+    Color? iconColor,
+    Color? textColor,
+    VoidCallback? onTap, {
+    bool? switchValue,
+    ValueChanged<bool>? onSwitchChanged,
+  }) {
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-      leading: Icon(icon, color: const Color.fromARGB(255, 0, 0, 0)),
-      title: Text(title),
-      onTap: () => onTap(),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+      leading: Icon(icon, color: iconColor),
+      title: Text(title, style: TextStyle(color: textColor)),
+      onTap: onTap,
+      trailing:
+          (switchValue != null && onSwitchChanged != null)
+              ? Switch(
+                value: switchValue,
+                onChanged: onSwitchChanged,
+                activeColor: Theme.of(context).colorScheme.secondary,
+              )
+              : null,
     );
   }
 
-  // Logout button widget
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton(
@@ -93,9 +176,9 @@ class SettingsPage extends StatelessWidget {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
-          padding: EdgeInsets.symmetric(vertical: 14.0),
+          padding: const EdgeInsets.symmetric(vertical: 14.0),
         ),
-        child: Text('Log Out', style: TextStyle(fontSize: 16)),
+        child: const Text('Log Out', style: TextStyle(fontSize: 16)),
       ),
     );
   }
@@ -106,17 +189,31 @@ void main() {
     MaterialApp(
       theme: ThemeData.light().copyWith(
         primaryColor: Colors.blue,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.blue),
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.blue),
         scaffoldBackgroundColor: Colors.grey[100],
+        iconTheme: const IconThemeData(color: Colors.black87),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black87),
+          titleMedium: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: Colors.blueGrey,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.blueGrey),
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.blueGrey),
         scaffoldBackgroundColor: Colors.black87,
+        iconTheme: const IconThemeData(color: Colors.white70),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white70),
+          titleMedium: TextStyle(
+            color: Colors.white70,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      themeMode:
-          ThemeMode
-              .system, // Automatically switch between dark and light mode based on the system settings
+      themeMode: ThemeMode.system,
       home: SettingsPage(),
     ),
   );

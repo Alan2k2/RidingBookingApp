@@ -31,6 +31,9 @@ class _AuthPageState extends State<AuthPage>
   bool _confirmObscure = true;
 
   String _selectedCategory = 'User';
+  String _selectedVehicle = 'Auto';
+
+  final List<String> _vehicleOptions = ['Auto', 'Car', 'Bike'];
 
   @override
   void initState() {
@@ -61,7 +64,6 @@ class _AuthPageState extends State<AuthPage>
             ),
           );
 
-          // Navigate to the correct dashboard
           switch (category) {
             case 'User':
               Navigator.pushReplacementNamed(context, '/home');
@@ -102,6 +104,7 @@ class _AuthPageState extends State<AuthPage>
             'phone': _regPhone.text.trim(),
             'pincode': _regPincode.text.trim(),
             'place': _regPlace.text.trim(),
+            'vehicle': _selectedCategory == 'Rider' ? _selectedVehicle : null,
           }),
         );
 
@@ -313,16 +316,30 @@ class _AuthPageState extends State<AuthPage>
                 },
               ),
             ),
-            ListTile(
-              title: const Text("Admin"),
-              leading: Radio(
-                value: 'Admin',
-                groupValue: _selectedCategory,
+            if (_selectedCategory == 'Rider') ...[
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: "Select Vehicle",
+                  border: OutlineInputBorder(),
+                ),
+                value: _selectedVehicle,
+                items:
+                    _vehicleOptions
+                        .map(
+                          (vehicle) => DropdownMenuItem(
+                            value: vehicle,
+                            child: Text(vehicle),
+                          ),
+                        )
+                        .toList(),
                 onChanged: (value) {
-                  setState(() => _selectedCategory = value!);
+                  setState(() {
+                    _selectedVehicle = value!;
+                  });
                 },
               ),
-            ),
+            ],
             const SizedBox(height: 30),
             ElevatedButton.icon(
               onPressed: _register,

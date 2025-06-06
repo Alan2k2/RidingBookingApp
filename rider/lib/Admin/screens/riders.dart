@@ -23,7 +23,8 @@ class _RiderListScreenState extends State<RiderListScreen> {
   }
 
   Future<void> fetchUsers() async {
-    const String url = 'http://192.168.29.177:5000/api/admin/rider-list/riders';
+    const String url =
+        'http://192.168.29.177:5000/api/admin/rider-list/riders?category=Rider';
 
     try {
       final response = await http.get(Uri.parse(url));
