@@ -18,7 +18,11 @@ const upload = multer({ storage });
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { postalCode, locality, city, district, link } = req.body;
+<<<<<<< HEAD
     const imageUrl = req.file ? `uploads/adds/${req.file.filename}` : '';
+=======
+    const imageUrl = req.file ? `uploads/adds${req.file.filename}` : '';
+>>>>>>> d6c202511764f4f0d5676b9567822feec8dd93a8
     const ad = await Advertisement.create({ postalCode, locality, city, district, link, imageUrl });
     res.status(200).json({ success: true, data: ad });
   } catch (err) {

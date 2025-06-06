@@ -9,10 +9,13 @@ const userRoutes = require('./routes/admin/user-list');
 const riderRoutes = require('./routes/admin/rider-list');
 const locationRoutes = require('./routes/admin/locationRoutes');
 const advertisementRoutes = require('./routes/admin/advertisementRoutes');
+<<<<<<< HEAD
 
 // Importing routes for rider functionalities
 const chatRoutes = require('./routes/rider/chatRoutes');
 const userRoutesRider = require('./routes/rider/userRoutes');
+=======
+>>>>>>> d6c202511764f4f0d5676b9567822feec8dd93a8
 
 dotenv.config();
 connectDB();
@@ -33,8 +36,14 @@ app.use('/api/admin/location', locationRoutes);
 app.use('/api/admin/advertisement', advertisementRoutes);
 
 //Rider routes
+<<<<<<< HEAD
 app.use('/api/rider/chat/', chatRoutes);
 app.use('/api/rider/getinfo', userRoutesRider);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0',() => console.log(`Server running on port ${PORT}`));
+=======
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0',() => console.log(`Server running on port ${PORT}`));
+>>>>>>> d6c202511764f4f0d5676b9567822feec8dd93a8
